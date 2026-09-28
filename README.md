@@ -54,5 +54,8 @@ Place both the files where its supposed to be, same like we did in Prog7314:
 
 * firebase-service-account.json location path: GoldTimeCo/GoldTimeApi
 
+# Videos
+
+Once you are done with your part, please take create a video of you explaining what you did for your part and how the code works. Send the mp4 video file to (Yashin - 079 375 3759), for the PowerPoint Presentation.
 
 
