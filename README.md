@@ -21,7 +21,7 @@ Open Android Studio and choose the GoldTimeCo folder, in the folder choose the G
                                              /GoldTimeApp
 
 
-The API is hosted already therefore, you don't need to run the API separately. You can run the app straight from the Android Studio platformn onto your emulator or physical device.
+The API is hosted already therefore, you don't need to run the API separately. You can run the app straight from the Android Studio platform onto your emulator or physical device.
 
 # If there are any changes in the API code
 
