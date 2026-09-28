@@ -29,12 +29,11 @@ If you have added any changes to the code for the API, You have to re-publish th
 
 1. Click Publish and the API will re-publish
 
-![Uploading image.png…]()
-
+<img width="1692" height="800" alt="image" src="https://github.com/user-attachments/assets/4af22a3a-1203-4216-b721-1f612ff7b60d" />
 
 2. This tab  in your browser will open, and that's how you know its working
 
-![alt text](image-1.png)
+<img width="1696" height="690" alt="image" src="https://github.com/user-attachments/assets/e682c474-4b1d-4aa8-875d-6b47750b99b1" />
 
 # How to add images
 
