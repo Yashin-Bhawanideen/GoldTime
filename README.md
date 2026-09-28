@@ -29,7 +29,8 @@ If you have added any changes to the code for the API, You have to re-publish th
 
 1. Click Publish and the API will re-publish
 
-![alt text](image.png)
+![Uploading image.png…]()
+
 
 2. This tab  in your browser will open, and that's how you know its working
 
