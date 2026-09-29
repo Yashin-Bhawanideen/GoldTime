@@ -66,16 +66,22 @@ import com.goldtime.app.ui.theme.HeadingFont
 @Composable
 fun HomeScreen(
     onSignOut: () -> Unit,
+    onRequestQuote: () -> Unit,
+    onBrowse: () -> Unit,
     vm: HomeViewModel = viewModel()
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val comingSoon = { Toast.makeText(context, "Coming soon", Toast.LENGTH_SHORT).show() }
+
+    val comingSoon = {
+        Toast.makeText(context, "Coming soon", Toast.LENGTH_SHORT).show()
+    }
 
     Scaffold(
         containerColor = GoldColors.Background,
         bottomBar = { GoldBottomBar(onOther = comingSoon) }
     ) { padding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -83,14 +89,25 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
+
             Spacer(Modifier.height(8.dp))
-            HomeHeader(onBrowse = comingSoon, onCart = comingSoon, onSignOut = onSignOut)
+
+            HomeHeader(
+                onBrowse = onBrowse,
+                onCart = comingSoon,
+                onSignOut = onSignOut
+            )
+
             Spacer(Modifier.height(16.dp))
 
-            HeroBanner(state.data.hero, onExplore = comingSoon)
+            HeroBanner(
+                hero = state.data.hero,
+                onExplore = comingSoon
+            )
 
             state.error?.let {
                 Spacer(Modifier.height(10.dp))
+
                 Text(
                     it,
                     color = GoldColors.TextMuted,
@@ -102,6 +119,7 @@ fun HomeScreen(
             }
 
             Spacer(Modifier.height(22.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -114,6 +132,7 @@ fun HomeScreen(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
                 )
+
                 Text(
                     "SEE ALL",
                     color = GoldColors.Gold,
@@ -123,6 +142,7 @@ fun HomeScreen(
                     modifier = Modifier.clickable { comingSoon() }
                 )
             }
+
             Spacer(Modifier.height(12.dp))
 
             LazyRow(
@@ -130,39 +150,78 @@ fun HomeScreen(
                 verticalAlignment = Alignment.Top,
                 contentPadding = PaddingValues(end = 4.dp)
             ) {
-                items(state.data.featured, key = { it.id }) { asset ->
-                    AssetCard(asset, onQuote = comingSoon)
+                items(
+                    state.data.featured,
+                    key = { it.id }
+                ) { asset ->
+
+                    AssetCard(
+                        asset = asset,
+                        onQuote = onRequestQuote
+                    )
                 }
             }
 
             Spacer(Modifier.height(24.dp))
-            SellGoldCard(onClick = comingSoon)
+
+            SellGoldCard(
+                onClick = comingSoon
+            )
+
             Spacer(Modifier.height(24.dp))
         }
     }
 }
 
 @Composable
-private fun HomeHeader(onBrowse: () -> Unit, onCart: () -> Unit, onSignOut: () -> Unit) {
+private fun HomeHeader(
+    onBrowse: () -> Unit,
+    onCart: () -> Unit,
+    onSignOut: () -> Unit
+) {
     var menuOpen by remember { mutableStateOf(false) }
 
-    Box(Modifier.fillMaxWidth().height(42.dp)) {
-        // BROWSE pill
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(42.dp)
+    ) {
+
         Row(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .clip(CircleShape)
-                .border(1.dp, GoldColors.Gold.copy(alpha = 0.3f), CircleShape)
+                .border(
+                    1.dp,
+                    GoldColors.Gold.copy(alpha = 0.3f),
+                    CircleShape
+                )
                 .clickable(onClick = onBrowse)
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .padding(
+                    horizontal = 12.dp,
+                    vertical = 8.dp
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Outlined.GridView, null, tint = GoldColors.Gold, modifier = Modifier.size(13.dp))
+
+            Icon(
+                Icons.Outlined.GridView,
+                null,
+                tint = GoldColors.Gold,
+                modifier = Modifier.size(13.dp)
+            )
+
             Spacer(Modifier.width(6.dp))
-            Text("BROWSE", color = GoldColors.Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+
+            Text(
+                "BROWSE",
+                color = GoldColors.Gold,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
         }
 
-        // Brand title
         Text(
             "GOLD TIME CO",
             color = GoldColors.Gold,
@@ -172,13 +231,14 @@ private fun HomeHeader(onBrowse: () -> Unit, onCart: () -> Unit, onSignOut: () -
             modifier = Modifier.align(Alignment.Center)
         )
 
-        // Account + cart
         Row(
             modifier = Modifier.align(Alignment.CenterEnd),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
+
             Box {
+
                 Box(
                     modifier = Modifier
                         .size(36.dp)
@@ -186,15 +246,26 @@ private fun HomeHeader(onBrowse: () -> Unit, onCart: () -> Unit, onSignOut: () -
                         .clickable { menuOpen = true },
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(Icons.Outlined.Person, "Account", tint = GoldColors.TextMuted, modifier = Modifier.size(20.dp))
+                    Icon(
+                        Icons.Outlined.Person,
+                        "Account",
+                        tint = GoldColors.TextMuted,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
+
                 DropdownMenu(
                     expanded = menuOpen,
                     onDismissRequest = { menuOpen = false },
                     containerColor = GoldColors.Surface
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Sign out", color = GoldColors.TextPrimary) },
+                        text = {
+                            Text(
+                                "Sign out",
+                                color = GoldColors.TextPrimary
+                            )
+                        },
                         onClick = {
                             menuOpen = false
                             onSignOut()
@@ -202,6 +273,7 @@ private fun HomeHeader(onBrowse: () -> Unit, onCart: () -> Unit, onSignOut: () -
                     )
                 }
             }
+
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -210,31 +282,51 @@ private fun HomeHeader(onBrowse: () -> Unit, onCart: () -> Unit, onSignOut: () -
                     .clickable(onClick = onCart),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Outlined.ShoppingCart, "Cart", tint = Color.White, modifier = Modifier.size(18.dp))
+                Icon(
+                    Icons.Outlined.ShoppingCart,
+                    "Cart",
+                    tint = Color.White,
+                    modifier = Modifier.size(18.dp)
+                )
             }
         }
     }
 }
 
 @Composable
-private fun HeroBanner(hero: HeroContent, onExplore: () -> Unit) {
+private fun HeroBanner(
+    hero: HeroContent,
+    onExplore: () -> Unit
+) {
     val shape = RoundedCornerShape(20.dp)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(230.dp)
             .clip(shape)
-            .border(1.dp, Color.White.copy(alpha = 0.15f), shape)
+            .border(
+                1.dp,
+                Color.White.copy(alpha = 0.15f),
+                shape
+            )
     ) {
-        RemoteImage(hero.imageUrl, Modifier.fillMaxSize())
 
-        // dark fade so the text is readable, like the design
+        RemoteImage(
+            hero.imageUrl,
+            Modifier.fillMaxSize()
+        )
+
         Box(
             Modifier
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        listOf(Color(0x22000000), Color(0xCC000000), Color(0xFF000000))
+                        listOf(
+                            Color(0x22000000),
+                            Color(0xCC000000),
+                            Color(0xFF000000)
+                        )
                     )
                 )
         )
@@ -242,17 +334,34 @@ private fun HeroBanner(hero: HeroContent, onExplore: () -> Unit) {
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 18.dp, bottom = 18.dp, end = 110.dp)
+                .padding(
+                    start = 18.dp,
+                    bottom = 18.dp,
+                    end = 110.dp
+                )
         ) {
+
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(GoldColors.Gold.copy(alpha = 0.16f))
-                    .padding(horizontal = 10.dp, vertical = 5.dp)
+                    .background(
+                        GoldColors.Gold.copy(alpha = 0.16f)
+                    )
+                    .padding(
+                        horizontal = 10.dp,
+                        vertical = 5.dp
+                    )
             ) {
-                Text(hero.badge, color = GoldColors.Gold, fontSize = 10.sp, fontWeight = FontWeight.Medium)
+                Text(
+                    hero.badge,
+                    color = GoldColors.Gold,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
+
             Spacer(Modifier.height(12.dp))
+
             Text(
                 hero.title,
                 color = Color.White,
@@ -261,35 +370,70 @@ private fun HeroBanner(hero: HeroContent, onExplore: () -> Unit) {
                 fontSize = 20.sp,
                 lineHeight = 26.sp
             )
+
             Spacer(Modifier.height(4.dp))
-            Text(hero.subtitle, color = Color(0xFFB0B0B0), fontSize = 11.sp)
+
+            Text(
+                hero.subtitle,
+                color = Color(0xFFB0B0B0),
+                fontSize = 11.sp
+            )
         }
 
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp)
+                .padding(
+                    end = 16.dp,
+                    bottom = 16.dp
+                )
                 .clip(CircleShape)
                 .background(GoldColors.Gold)
                 .clickable(onClick = onExplore)
-                .padding(horizontal = 18.dp, vertical = 9.dp)
+                .padding(
+                    horizontal = 18.dp,
+                    vertical = 9.dp
+                )
         ) {
-            Text("EXPLORE", color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 0.5.sp)
+            Text(
+                "EXPLORE",
+                color = Color.Black,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp
+            )
         }
     }
 }
 
 @Composable
-private fun AssetCard(asset: FeaturedAsset, onQuote: () -> Unit) {
+private fun AssetCard(
+    asset: FeaturedAsset,
+    onQuote: () -> Unit
+) {
     Column(
         modifier = Modifier
             .width(150.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(Color(0xFF161616))
-            .clickable(onClick = onQuote)
     ) {
-        RemoteImage(asset.imageUrl, Modifier.fillMaxWidth().height(125.dp))
-        Column(Modifier.padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 14.dp)) {
+
+        RemoteImage(
+            asset.imageUrl,
+            Modifier
+                .fillMaxWidth()
+                .height(125.dp)
+        )
+
+        Column(
+            Modifier.padding(
+                start = 12.dp,
+                end = 12.dp,
+                top = 12.dp,
+                bottom = 14.dp
+            )
+        ) {
+
             Text(
                 asset.name,
                 color = Color.White,
@@ -299,65 +443,151 @@ private fun AssetCard(asset: FeaturedAsset, onQuote: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
                 lineHeight = 18.sp
             )
-            Spacer(Modifier.height(2.dp))
-            Text(asset.cta, color = GoldColors.Gold, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+
+            Spacer(Modifier.height(10.dp))
+
+            Text(
+                asset.cta,
+                color = GoldColors.Gold,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.clickable(
+                    onClick = onQuote
+                )
+            )
+
+            Spacer(Modifier.height(10.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(GoldColors.Gold)
+                    .clickable {
+                        // Add to cart will be implemented later
+                    }
+                    .padding(vertical = 10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "ADD TO CART",
+                    color = Color.Black,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.8.sp
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun SellGoldCard(onClick: () -> Unit) {
+private fun SellGoldCard(
+    onClick: () -> Unit
+) {
     val shape = RoundedCornerShape(16.dp)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
             .background(
-                Brush.horizontalGradient(listOf(Color(0xFF1C1808), Color(0xFF0F0F0F)))
+                Brush.horizontalGradient(
+                    listOf(
+                        Color(0xFF1C1808),
+                        Color(0xFF0F0F0F)
+                    )
+                )
             )
-            .border(1.dp, GoldColors.Gold.copy(alpha = 0.2f), shape)
+            .border(
+                1.dp,
+                GoldColors.Gold.copy(alpha = 0.2f),
+                shape
+            )
             .clickable(onClick = onClick)
             .padding(18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(Modifier.weight(1f)) {
-            Text("SELL YOUR GOLD", color = GoldColors.Gold, fontSize = 11.sp, letterSpacing = 1.5.sp)
+
+        Column(
+            Modifier.weight(1f)
+        ) {
+
+            Text(
+                "SELL YOUR GOLD",
+                color = GoldColors.Gold,
+                fontSize = 11.sp,
+                letterSpacing = 1.5.sp
+            )
+
             Spacer(Modifier.height(6.dp))
+
             Text(
                 "Get top value for your gold",
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
+
             Spacer(Modifier.height(4.dp))
+
             Text(
                 "Gold jewellery, coins, Krugerrands & bars",
                 color = GoldColors.TextMuted,
                 fontSize = 12.sp
             )
         }
-        Icon(Icons.Outlined.ChevronRight, null, tint = GoldColors.Gold)
+
+        Icon(
+            Icons.Outlined.ChevronRight,
+            null,
+            tint = GoldColors.Gold
+        )
     }
 }
 
-private data class NavItem(val label: String, val icon: ImageVector)
+private data class NavItem(
+    val label: String,
+    val icon: ImageVector
+)
 
 @Composable
-private fun GoldBottomBar(onOther: () -> Unit) {
+private fun GoldBottomBar(
+    onOther: () -> Unit
+) {
     val items = listOf(
         NavItem("Home", Icons.Outlined.Home),
         NavItem("Shop", Icons.Outlined.ShoppingBag),
         NavItem("Sell Gold", Icons.Outlined.Sell),
         NavItem("Orders", Icons.Outlined.Receipt)
     )
-    NavigationBar(containerColor = Color(0xFF0B0B0B), tonalElevation = 0.dp) {
+
+    NavigationBar(
+        containerColor = Color(0xFF0B0B0B),
+        tonalElevation = 0.dp
+    ) {
+
         items.forEach { item ->
+
             val selected = item.label == "Home"
+
             NavigationBarItem(
                 selected = selected,
-                onClick = { if (!selected) onOther() },
-                icon = { Icon(item.icon, contentDescription = item.label) },
-                label = { Text(item.label, fontSize = 11.sp) },
+                onClick = {
+                    if (!selected) onOther()
+                },
+                icon = {
+                    Icon(
+                        item.icon,
+                        contentDescription = item.label
+                    )
+                },
+                label = {
+                    Text(
+                        item.label,
+                        fontSize = 11.sp
+                    )
+                },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = GoldColors.Gold,
                     selectedTextColor = GoldColors.Gold,
