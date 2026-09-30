@@ -30,7 +30,21 @@ Reference: Oracle. n.d. BigDecimal (Java SE 17). [Online]. Available at: https:/
 
 Preview verification on 1 October 2026: after correcting text contrast and card colours, the user reported the flow working and supplied the "Preview: ready for payment" confirmation. This verifies that the interactive sample flow reaches the payment callback; no actual payment or order was created. The earlier empty-cart preview had a no-op edit callback; it now opens the delivery form and returns to review. The screenshot does not independently establish the exact displayed total, edited-city persistence, large-font layout or empty-cart disabled state; retain these for final regression testing. Automated calculation tests remain the evidence for totals. The UI has run in Android Studio's preview; this is not a claim of complete app/navigation integration.
 
-## Delivery screen references
+## Payment method selection
+
+Requirement: WIL Task 2 Sector 4 payment-method screen and Task 1 card/Instant EFT purchase options. Added Step 3 with the current order total, explicit single-method selection, validation feedback and return to Review Order. The preview now connects all three screens and retains the selected method and submitted address while moving backwards/forwards. PaymentMethodScreen passes valid selections to a callback; it does not send a network request.
+
+Rubric: UX and Feedback (selection errors and back navigation), Responsiveness and Accessibility (scrolling and labelled radio-group semantics), Programming Skills (separate checkout validation). Comments and references follow the user's Kerberos style.
+
+Card and Instant EFT are UI options from the requirements, not a claim that a merchant account has enabled either option. Preview actions are labelled "Check selection" and explicitly report that no payment/order is submitted. PayFast configuration, pending order storage, authoritative prices, notifications and verified payment confirmation remain outstanding.
+
+Tests: all 18 checkout logic tests passed with Kotlin 2.0.21 and JUnit 4.13.2 on 1 October 2026. PaymentMethodTest adds five tests for missing selection, both supported selections, empty Cart, invalid delivery and zero total. Android Studio build/interactive testing is pending. Manually check no-selection error, switching methods, total consistency, back to review/delivery and return with state retained. The successful preview dialog must say "method selected", never "payment successful".
+
+Reference: Android Developers. 2026. Radio button. [Online]. Available at: https://developer.android.com/develop/ui/compose/components/radio-button [Accessed 1 October 2026].
+
+Manual verification on 1 October 2026: after receiving the build and interactive checklist, the user confirmed completion. The reported checks cover selection-required feedback, switching Card/Instant EFT, retaining selection after returning from Review Order, and the preview confirmation. This is user-reported preview verification, not a live PayFast or persisted-order test. All 18 checkout logic tests also passed independently. Device accessibility and full application navigation remain for later integration checks.
+
+## Delivery references
 
 Android Developers, Save UI state in Compose. Accessed 30 September 2026.
 https://developer.android.com/develop/ui/compose/state-saving

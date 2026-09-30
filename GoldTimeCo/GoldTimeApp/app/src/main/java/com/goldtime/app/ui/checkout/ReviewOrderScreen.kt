@@ -112,25 +112,31 @@ fun CheckoutFlowPreview() {
         CheckoutItem("preview-silver", "Silver Bar", 1, BigDecimal("21450.00"))
     ), BigDecimal("150.00"))
     var details by rememberSaveable(stateSaver = deliverySaver) { mutableStateOf(DeliveryDetails()) }
-    var review by rememberSaveable { mutableStateOf(false) }
+    var step by rememberSaveable { mutableStateOf("delivery") }
+    //keeps the selection when returning to review or editing the delivery address
+    var methodName by rememberSaveable { mutableStateOf<String?>(null) }
+    val selectedMethod = methodName?.let { PaymentMethod.valueOf(it) }
     var paymentMessage by remember { mutableStateOf(false) }
     GoldTimeTheme {
         Column(Modifier.fillMaxSize().background(GoldColors.Background)) {
             Text("PREVIEW — SAMPLE CART", color = GoldColors.Gold, modifier = Modifier.padding(8.dp))
             Box(Modifier.weight(1f)) {
-                if (review) {
-                    ReviewOrderScreen(order, details, onEditDelivery = { review = false },
-                        onProceedToPayment = { paymentMessage = true })
-                } else {
-                    DeliveryDetailsScreen(onBack = {}, initialDetails = details,
-                        onContinue = { details = it; review = true })
+                when (step) {
+                    "review" -> ReviewOrderScreen(order, details, onEditDelivery = { step = "delivery" },
+                        onProceedToPayment = { step = "payment" })
+                    "payment" -> PaymentMethodScreen(order, details, selectedMethod,
+                        onMethodSelected = { methodName = it.name },
+                        onBack = { step = "review" },
+                        onContinue = { paymentMessage = true }, previewOnly = true)
+                    else -> DeliveryDetailsScreen(onBack = {}, initialDetails = details,
+                        onContinue = { details = it; step = "review" })
                 }
             }
         }
         if (paymentMessage) {
             AlertDialog(onDismissRequest = { paymentMessage = false },
-                title = { Text("Preview: ready for payment") },
-                text = { Text("Order review passed. Payment integration is the next feature. No order has been placed.") },
+                title = { Text("Preview: method selected") },
+                text = { Text("${selectedMethod?.label} selected. No order or payment has been submitted. PayFast is not connected yet.") },
                 confirmButton = { TextButton(onClick = { paymentMessage = false }) { Text("OK") } })
         }
     }
