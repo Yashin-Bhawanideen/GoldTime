@@ -50,9 +50,15 @@ eg. Silver-bar (correct)
 
 Place both the files where its supposed to be, same like we did in Prog7314:
 
-* google-service.json location path: GoldTimeCo/GoldTimeApp/app
+* google-services.json location path: GoldTimeCo/GoldTimeApp/app (download the Android configuration for the correct Firebase project).
 
-* firebase-service-account.json location path: GoldTimeCo/GoldTimeApi
+* For local API credentials, keep the service-account file outside the repository and set GOOGLE_APPLICATION_CREDENTIALS to its absolute path. On Azure, the existing API reads Firebase__CredentialsJson and Firebase__ProjectId from application settings. Do not commit service-account keys or put them in Android. The previously tracked JSON archive must not be treated as a safe credential source; its exposed key needs rotation by the account owner.
+
+## Sector 4 checkout status
+
+Delivery Details, Review Order and Payment Method Selection currently work together in the Compose sample preview. They are not yet connected to the real Cart, app navigation or PayFast. A preview confirmation does not mean an order was placed or paid.
+
+The pending-order API has been added and locally built/tested. It requires authenticated requests, database product prices/stock and a configured delivery fee. Deployment and live database writes remain unverified. See [checkout API setup and tests](docs/checkout-api.md) and [Sector 4 progress and rubric evidence](docs/sector4-progress.md) before integration. Payment notification verification, stock reservation and payment-success confirmation remain to be implemented.
 
 # Videos
 

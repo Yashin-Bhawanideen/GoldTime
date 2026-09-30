@@ -44,6 +44,18 @@ Reference: Android Developers. 2026. Radio button. [Online]. Available at: https
 
 Manual verification on 1 October 2026: after receiving the build and interactive checklist, the user confirmed completion. The reported checks cover selection-required feedback, switching Card/Instant EFT, retaining selection after returning from Review Order, and the preview confirmation. This is user-reported preview verification, not a live PayFast or persisted-order test. All 18 checkout logic tests also passed independently. Device accessibility and full application navigation remain for later integration checks.
 
+## Pending-order API — 1 October 2026
+
+Added authenticated POST /api/orders and owner-only GET /api/orders/{id}. Server-side validation checks delivery, allowed payment selections, distinct product IDs and quantities. The server reads product prices and stock from Firestore and computes whole-cent totals; the request cannot choose its owner or paid status. Pending orders include item/address snapshots, currency and creation time. A Firestore transaction uses a user-scoped request ID and request fingerprint to prevent duplicate creation on identical retries and reject changed details under the same ID.
+
+No priced catalogue existed in the API. The new required products schema and configured delivery fee are documented in checkout-api.md for coordination with Sector 2/3 and Yashin. Unknown/unavailable/unpriced products fail closed. Stock is checked but not reserved; payment remains disabled/unimplemented until reservation/expiry and verified PayFast handling are added. The Android preview still makes no order request.
+
+Rubric: Back End Programming Skills, Database, APIs, Security, Data Flow & Logic. Added 27 automated tests covering calculations, malformed inputs, unavailable/insufficient-stock products, identity derivation, changed fingerprints, controller ownership and safe error responses. These tests are not a CI/CD deployment or a live database test.
+
+Verification: the actual net8.0 API and test project compiled with the original Firestore 3.7.0/JWT 8.0.8 dependencies, with no compiler warnings after correction. All 27 xUnit tests passed. Standard NuGet downloading failed due this machine's TLS configuration; public packages were downloaded with Python's verified HTTPS client into a task-local package feed, then restored locally. No credentials or cloud writes were used. Firestore transaction/concurrency behaviour, HTTP JWT middleware and Azure deployment remain integration checks. Existing Android tests were not repeated because no Android source changed.
+
+Comments and references were included in the transaction implementation and setup document. The README now accurately describes this increment and corrects the Android configuration filename and service-account handling instructions.
+
 ## Delivery references
 
 Android Developers, Save UI state in Compose. Accessed 30 September 2026.

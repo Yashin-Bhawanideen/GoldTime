@@ -15,6 +15,7 @@ if (string.IsNullOrWhiteSpace(projectId) || projectId == "YOUR_FIREBASE_PROJECT_
 }
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<GoldTimeApi.Services.IOrderStore, GoldTimeApi.Services.OrderStore>();
 
 // ---- Firestore ----
 // Azure:     the whole service-account JSON is stored in the app setting Firebase__CredentialsJson
