@@ -27,7 +27,11 @@ fun ReviewOrderScreen(
     order: OrderReview,
     details: DeliveryDetails,
     onEditDelivery: () -> Unit,
-    onProceedToPayment: () -> Unit
+    onProceedToPayment: () -> Unit,
+    heading: String = "Review Order",
+    stepLabel: String = "STEP 2 OF 3",
+    continueLabel: String = "Proceed to payment",
+    allowContinue: Boolean = true
 ) {
     val validDelivery = validateDelivery(details).isEmpty()
     Box(Modifier.fillMaxSize().background(GoldColors.Background).systemBarsPadding(),
@@ -41,8 +45,8 @@ fun ReviewOrderScreen(
                         tint = GoldColors.Gold)
                 }
                 Column {
-                    Text("STEP 2 OF 3", color = GoldColors.Gold, fontSize = 11.sp)
-                    Text("Review Order", fontFamily = HeadingFont, fontSize = 28.sp,
+                    Text(stepLabel, color = GoldColors.Gold, fontSize = 11.sp)
+                    Text(heading, fontFamily = HeadingFont, fontSize = 28.sp,
                         fontWeight = FontWeight.SemiBold, color = GoldColors.TextPrimary)
                 }
             }
@@ -83,8 +87,8 @@ fun ReviewOrderScreen(
             ReviewAmount("Delivery", order.delivery)
             ReviewAmount("Total", order.total)
             //the API must confirm product prices before creating a payment
-            GoldButton("Proceed to payment", onProceedToPayment,
-                enabled = order.canContinue && validDelivery)
+            GoldButton(continueLabel, onProceedToPayment,
+                enabled = allowContinue && order.canContinue && validDelivery)
         }
     }
 }
