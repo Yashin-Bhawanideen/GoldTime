@@ -23,13 +23,14 @@ val southAfricanProvinces = listOf(
     "Mpumalanga", "North West", "Northern Cape", "Western Cape"
 )
 
-// Client-side checks provide feedback; the order API must validate again.
+//checks the details before continuing; the API must also validate them when saving the order
 fun validateDelivery(details: DeliveryDetails): Map<String, String> {
     val data = details.trimmed()
     val errors = mutableMapOf<String, String>()
     if (data.fullName.isBlank() || data.fullName.length > 100) {
         errors["fullName"] = "Enter a full name (up to 100 characters)."
     }
+    //allows spaces and brackets in phone numbers without accepting letters
     val compactPhone = data.phone.filterNot { it == ' ' || it == '-' || it == '(' || it == ')' }
     if (!Regex("""\+?[0-9]{7,15}""").matches(compactPhone)) {
         errors["phone"] = "Enter a phone number with 7–15 digits and an optional leading +."

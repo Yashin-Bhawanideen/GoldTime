@@ -25,3 +25,9 @@ Android Developers, Preview your UI with composable previews. Accessed 30 Septem
 https://developer.android.com/develop/ui/compose/tooling/previews
 
 These references informed state preservation and isolated preview testing. The application code was written for this project.
+
+## Comment and commit style
+
+Match the user's previous Kerberos work: short plain-language comments explaining logic, author/year citations where a source informed the implementation, and full reference entries in the relevant code file. Use n.d. when no publication year has been verified. Cite sources actually consulted, not unrelated references added to increase the count.
+
+Use short plain-language commit messages, for example "add delivery details validation" or "add order review screen". Commit meaningful tested changes separately and retain the existing history. Documentation-only edits do not require repeating application tests.

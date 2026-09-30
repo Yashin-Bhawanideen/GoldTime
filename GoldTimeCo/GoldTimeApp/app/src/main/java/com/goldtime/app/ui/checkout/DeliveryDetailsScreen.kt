@@ -35,7 +35,7 @@ fun DeliveryDetailsScreen(
     onContinue: (DeliveryDetails) -> Unit,
     initialDetails: DeliveryDetails = DeliveryDetails()
 ) {
-    // Keep the small form values through rotation and saved-state restoration.
+    //keeps the entered details when the screen is recreated (Android Developers, n.d.)
     var fullName by rememberSaveable { mutableStateOf(initialDetails.fullName) }
     var phone by rememberSaveable { mutableStateOf(initialDetails.phone) }
     var street by rememberSaveable { mutableStateOf(initialDetails.streetAddress) }
@@ -47,6 +47,7 @@ fun DeliveryDetailsScreen(
     val errors = if (submitted) validateDelivery(details) else emptyMap()
     val focus = LocalFocusManager.current
     val submit = {
+        //only sends the details to the next step when all fields are valid
         submitted = true
         if (validateDelivery(details).isEmpty()) {
             focus.clearFocus()
@@ -124,6 +125,7 @@ private fun DeliveryField(
 @Preview(name = "Delivery details", showBackground = true, widthDp = 380, heightDp = 820)
 @Composable
 fun DeliveryDetailsPreview() {
+    //allows the form to be tested without signing in (Android Developers, n.d.)
     GoldTimeTheme {
         var accepted by remember { mutableStateOf(false) }
         DeliveryDetailsScreen(onBack = {}, onContinue = { accepted = true })
@@ -137,3 +139,14 @@ fun DeliveryDetailsPreview() {
         }
     }
 }
+
+/*
+References
+Android Developers. n.d. Save UI state in Compose. [Online]. Available at:
+https://developer.android.com/develop/ui/compose/state-saving
+[Accessed 30 September 2026].
+
+Android Developers. n.d. Preview your UI with composable previews. [Online]. Available at:
+https://developer.android.com/develop/ui/compose/tooling/previews
+[Accessed 30 September 2026].
+*/
