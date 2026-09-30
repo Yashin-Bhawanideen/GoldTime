@@ -24,6 +24,13 @@ object ApiClient {
 
     private val jsonType = "application/json; charset=utf-8".toMediaType()
 
+    private val orders = OrderApi(client, API_BASE_URL)
+
+    suspend fun createOrder(idToken: String, draft: OrderDraft, requestId: String): SavedOrder =
+        orders.create(idToken, draft, requestId)
+
+    suspend fun getOrder(idToken: String, orderId: String): SavedOrder = orders.get(idToken, orderId)
+
     private fun url(path: String): String =
         API_BASE_URL.trimEnd('/') + "/" + path.trimStart('/')
 
