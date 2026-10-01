@@ -31,6 +31,8 @@ object ApiClient {
 
     suspend fun getOrder(idToken: String, orderId: String): SavedOrder = orders.get(idToken, orderId)
 
+    suspend fun paymentForm(idToken: String, order: SavedOrder): PayFastForm = orders.paymentForm(idToken, order)
+
     private fun url(path: String): String =
         API_BASE_URL.trimEnd('/') + "/" + path.trimStart('/')
 

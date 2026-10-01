@@ -46,26 +46,41 @@ data class SavedOrder(
     val order: OrderReview,
     val delivery: DeliveryDetails,
     val method: PaymentMethod,
-    val status: String
-)
+    val status: String,
+    val paymentEnvironment: String = "",
+    val paymentId: String = "",
+    val paidAtUtc: String = ""
+) {
+    val sandboxPaymentConfirmed: Boolean get() = status == "sandbox_paid" && paymentEnvironment == "sandbox" &&
+        Regex("[0-9]{1,30}").matches(paymentId) && runCatching { java.time.Instant.parse(paidAtUtc) }.isSuccess
+}
 
 class OrderApiException(val statusCode: Int, message: String) : IOException(message)
 
-class OrderApi(private val client: OkHttpClient, private val baseUrl: String) {
+class OrderApi(private val client: OkHttpClient, private val baseUrl: String, private val callbackBaseUrl: String = baseUrl) {
     suspend fun create(token: String, draft: OrderDraft, requestId: String): SavedOrder = send(
         Request.Builder().url("${baseUrl.trimEnd('/')}/api/orders")
             .header("Authorization", "Bearer $token")
             .post(draft.toJson(requestId).toString().toRequestBody("application/json; charset=utf-8".toMediaType()))
-            .build()
+            .build(), ::parseOrder
     )
 
     suspend fun get(token: String, orderId: String): SavedOrder {
         require(Regex("[a-f0-9]{64}").matches(orderId)) { "Invalid order ID." }
         return send(Request.Builder().url("${baseUrl.trimEnd('/')}/api/orders/$orderId")
-            .header("Authorization", "Bearer $token").get().build())
+            .header("Authorization", "Bearer $token").get().build(), ::parseOrder)
     }
 
-    private suspend fun send(request: Request): SavedOrder = suspendCancellableCoroutine { continuation ->
+    suspend fun paymentForm(token: String, order: SavedOrder): PayFastForm {
+        require(Regex("[a-f0-9]{64}").matches(order.id) && order.status == "pending_payment")
+        return send(Request.Builder().url("${baseUrl.trimEnd('/')}/api/orders/${order.id}/payment")
+            .header("Authorization", "Bearer $token")
+            .post("".toRequestBody("application/json".toMediaType())).build()) { json ->
+            PayFastForm.parse(json, order, callbackBaseUrl)
+        }
+    }
+
+    private suspend fun <T> send(request: Request, parse: (JSONObject) -> T): T = suspendCancellableCoroutine { continuation ->
         val call = client.newCall(request)
         //cancels the network call when the checkout operation is cancelled (JetBrains, n.d.)
         continuation.invokeOnCancellation { call.cancel() }
@@ -80,10 +95,10 @@ class OrderApi(private val client: OkHttpClient, private val baseUrl: String) {
                             400 -> "Check your delivery details and cart quantities."
                             401, 403 -> "Please sign in again before continuing."
                             404 -> "The order service or order could not be found."
-                            409 -> "Your order could not be saved. Check product availability and quantities before retrying."
+                            409 -> "The order may have expired, changed or already been paid. Check its status before trying again."
                             else -> "The order service is unavailable. Please retry."
                         })
-                        try { parseOrder(JSONObject(it.body?.string().orEmpty())) }
+                        try { parse(JSONObject(it.body?.string().orEmpty())) }
                         catch (e: Exception) { throw IOException("The server returned incomplete order details. Please retry.", e) }
                     }
                 }
@@ -113,7 +128,9 @@ class OrderApi(private val client: OkHttpClient, private val baseUrl: String) {
         val address = json.getJSONObject("delivery")
         return SavedOrder(id, order, DeliveryDetails(address.getString("fullName"), address.getString("phone"),
             address.getString("streetAddress"), address.getString("city"), address.getString("province"),
-            address.getString("postalCode")), PaymentMethod.valueOf(json.getString("paymentMethod")), json.getString("status"))
+            address.getString("postalCode")), PaymentMethod.valueOf(json.getString("paymentMethod")), json.getString("status"),
+            json.optString("paymentEnvironment", ""), json.optString("payFastPaymentId", ""),
+            if (json.isNull("paidAtUtc")) "" else json.optString("paidAtUtc", ""))
     }
 }
 
