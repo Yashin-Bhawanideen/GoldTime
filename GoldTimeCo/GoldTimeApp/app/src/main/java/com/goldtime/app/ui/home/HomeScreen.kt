@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.goldtime.app.data.CartRepository
 import com.goldtime.app.data.FeaturedAsset
 import com.goldtime.app.data.HeroContent
 import com.goldtime.app.ui.components.RemoteImage
@@ -68,6 +69,7 @@ fun HomeScreen(
     onSignOut: () -> Unit,
     onRequestQuote: () -> Unit,
     onBrowse: () -> Unit,
+    onCart: () -> Unit,
     vm: HomeViewModel = viewModel()
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -94,7 +96,7 @@ fun HomeScreen(
 
             HomeHeader(
                 onBrowse = onBrowse,
-                onCart = comingSoon,
+                onCart = onCart,
                 onSignOut = onSignOut
             )
 
@@ -411,6 +413,8 @@ private fun AssetCard(
     asset: FeaturedAsset,
     onQuote: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .width(150.dp)
@@ -464,7 +468,13 @@ private fun AssetCard(
                     .clip(RoundedCornerShape(12.dp))
                     .background(GoldColors.Gold)
                     .clickable {
-                        // Add to cart will be implemented later
+
+
+                        //add to cart button
+                        CartRepository.addItem(asset)
+                        Toast.makeText(context, "${asset.name} added to cart", Toast.LENGTH_SHORT).show()
+
+
                     }
                     .padding(vertical = 10.dp),
                 contentAlignment = Alignment.Center
