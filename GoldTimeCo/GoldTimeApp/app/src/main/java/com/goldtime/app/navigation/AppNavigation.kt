@@ -92,7 +92,7 @@ fun AppNavigation() {
                     },
                     onBrowse = {
                         nav.navigate(Routes.BROWSE)
-                    }
+                    },
                     onCart = {nav.navigate(Routes.CART)}
                 )
             }
