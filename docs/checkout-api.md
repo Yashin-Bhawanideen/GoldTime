@@ -1,6 +1,6 @@
 # Sector 4 pending orders
 
-This is the backend foundation for checkout, not a completed payment integration. The Android checkout currently runs with sample data in Compose previews. It does not call these endpoints yet. No Azure deployment or live Firestore write has been verified for this change.
+The Android `CheckoutScreen` accepts an `OrderReview` from Cart and calls these endpoints using the signed-in customer's Firebase token. It shows the server total before handing off through `onOrderConfirmed`. Connect this screen from the Cart route; `CheckoutFlowPreview` remains a separate sample with no network requests. Hosted checkout and Firestore writes require integration testing. For payment endpoints and server settings, see [PayFast sandbox setup](payfast-setup.md).
 
 ## Required server setup
 
@@ -59,7 +59,7 @@ Run `dotnet test GoldTimeCo/GoldTimeApi.Tests/GoldTimeApi.Tests.csproj` from the
 
 Before deployment, use the Firestore emulator or an authorised test environment to verify actual creation/read, simultaneous duplicate submissions, changed-request rejection, price updates and insufficient stock. Test HTTP authentication with missing, expired and wrong-project tokens; test another user's order. Do not use real payment credentials for these checks.
 
-Current stock is checked at pending-order creation but is **not reserved or deducted**. Pending orders are not a fulfilment promise. Before enabling payments, implement stock reservation/expiry or an agreed alternative, revalidate stale prices/orders, and verify PayFast notifications on the server. This increment has no payment endpoint, success claim, charge, cancellation/retry payment handling or order expiry. Live Firestore, payment, Android navigation and final accessibility checks remain outstanding.
+Current stock is checked at pending-order creation but is **not reserved or deducted**. Pending orders are not a fulfilment promise. Sandbox payments use a separate `sandbox_paid` status and must not trigger fulfilment. Before enabling real payments, implement stock reservation/expiry or an agreed alternative, and revalidate stale prices/orders. Live Firestore, hosted payment integration, Android navigation and final accessibility checks remain outstanding.
 
 ## Rubric and references
 

@@ -54,6 +54,7 @@ public class OrdersController(IOrderStore orders, ILogger<OrdersController> logg
     private static object ToResponse(CheckoutOrder order) => new
     {
         order.Id, order.Items, order.Delivery, order.PaymentMethod, order.Status, order.Currency,
-        order.SubtotalCents, order.DeliveryFeeCents, order.TotalCents, order.CreatedAtUtc
+        order.SubtotalCents, order.DeliveryFeeCents, order.TotalCents, order.CreatedAtUtc,
+        order.PaymentEnvironment, order.PayFastPaymentId, order.PaidAtUtc
     };
 }

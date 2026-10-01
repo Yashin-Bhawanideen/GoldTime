@@ -16,6 +16,9 @@ if (string.IsNullOrWhiteSpace(projectId) || projectId == "YOUR_FIREBASE_PROJECT_
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<GoldTimeApi.Services.IOrderStore, GoldTimeApi.Services.OrderStore>();
+builder.Services.AddScoped<GoldTimeApi.Services.ISandboxPaymentStore, GoldTimeApi.Services.SandboxPaymentStore>();
+builder.Services.AddHttpClient<GoldTimeApi.Services.PayFastService>(client => client.Timeout = TimeSpan.FromSeconds(20))
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
 
 // ---- Firestore ----
 // Azure:     the whole service-account JSON is stored in the app setting Firebase__CredentialsJson
@@ -62,6 +65,14 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
 var app = builder.Build();
 
+//captures the payment source before the existing forwarded-header middleware changes it
+app.Use(async (context, next) =>
+{
+    var trusted = (builder.Configuration["PayFast:TrustedProxyAddresses"] ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    context.Items[GoldTimeApi.Services.PayFastSource.SourceItem] = GoldTimeApi.Services.PayFastSource.ClientIp(
+        context.Connection.RemoteIpAddress, context.Request.Headers["X-Forwarded-For"].ToString(), trusted);
+    await next();
+});
 app.UseForwardedHeaders();
 app.UseStaticFiles(); // serves wwwroot/images/* at /images/*
 app.UseAuthentication();

@@ -68,4 +68,7 @@ public class CheckoutOrder
     [FirestoreProperty] public long DeliveryFeeCents { get; set; }
     [FirestoreProperty] public long TotalCents { get; set; }
     [FirestoreProperty] public DateTime CreatedAtUtc { get; set; }
+    [FirestoreProperty] public string PaymentEnvironment { get; set; } = "";
+    [FirestoreProperty] public string PayFastPaymentId { get; set; } = "";
+    [FirestoreProperty] public DateTime? PaidAtUtc { get; set; }
 }
