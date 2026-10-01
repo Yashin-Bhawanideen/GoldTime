@@ -31,6 +31,8 @@ The sandbox uses a test wallet, so card/EFT selection stays on the GoldTime orde
 
 ## Verification
 
+Android opens the signed sandbox form in `PayFastScreen`. Closing the page checks the authenticated order endpoint; it does not mark payment successful. `PaymentStatusScreen` displays either a pending/unverified result or a sandbox confirmation with its payment reference. Rotation or process recreation checks the saved order instead of automatically resubmitting the form. Cart contents are retained for sandbox testing.
+
 Run `dotnet test GoldTimeCo/GoldTimeApi.Tests/GoldTimeApi.Tests.csproj` from the repository root. Payment tests use a fake order store and HTTP handler, including signed form parsing. They do not establish that Azure, Firestore or PayFast is reachable.
 
 In an authorised sandbox environment, verify a complete payment, a delayed notification, closing checkout, a duplicate notification and an unavailable API. Confirm that return/cancel pages cannot mark an order paid. Check the notification result in the sandbox dashboard; sandbox notifications are sent once, so investigate failures and replay the test as needed. Verify actual Firestore transaction concurrency before relying on duplicate handling.

@@ -16,24 +16,27 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.goldtime.app.data.SavedOrder
 import com.goldtime.app.ui.theme.GoldColors
 
 @Composable
 fun CheckoutScreen(
     order: OrderReview,
     onBackToCart: () -> Unit,
-    onOrderConfirmed: ((SavedOrder) -> Unit)? = null,
-    vm: CheckoutViewModel = viewModel()
+    vm: CheckoutViewModel = viewModel(),
+    paymentVm: PaymentViewModel = viewModel()
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
+    val payment by paymentVm.state.collectAsStateWithLifecycle()
     var step by rememberSaveable { mutableStateOf("delivery") }
     var details by rememberSaveable(stateSaver = checkoutAddressSaver) { mutableStateOf(DeliveryDetails()) }
     var methodName by rememberSaveable { mutableStateOf<String?>(null) }
     val method = methodName?.let { PaymentMethod.valueOf(it) }
     val back = {
-        if (!state.loading) {
-            if (state.savedOrder != null) vm.edit()
+        if (!state.loading && !payment.loading) {
+            if (payment.orderId != null) {
+                if (payment.form != null) paymentVm.check()
+                else { paymentVm.leave(); onBackToCart() }
+            } else if (state.savedOrder != null) vm.edit()
             else when (step) {
                 "payment" -> { vm.edit(); step = "review" }
                 "review" -> step = "delivery"
@@ -51,6 +54,10 @@ fun CheckoutScreen(
         Box(Modifier.weight(1f)) {
             val saved = state.savedOrder
             when {
+                payment.form != null -> PayFastScreen(payment.form!!, paymentVm.pageOpened,
+                    onOpened = paymentVm::opened, onClose = paymentVm::check)
+                payment.orderId != null -> PaymentStatusScreen(payment, paymentVm::check,
+                    onBackToCart = { paymentVm.leave(); onBackToCart() })
                 state.loading -> Column(Modifier.fillMaxSize().padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center) {
@@ -60,11 +67,11 @@ fun CheckoutScreen(
                 }
                 saved != null -> ReviewOrderScreen(saved.order, saved.delivery,
                     onEditDelivery = { vm.edit(); step = "delivery" },
-                    onProceedToPayment = { onOrderConfirmed?.invoke(saved) },
+                    onProceedToPayment = { paymentVm.start(saved) },
                     heading = "Confirm Total", stepLabel = if (saved.status == "pending_payment")
                         "ORDER SAVED — NOT PAID" else "ORDER STATUS: ${saved.status}",
-                    continueLabel = if (onOrderConfirmed == null) "Payment not available" else "Continue to PayFast",
-                    allowContinue = onOrderConfirmed != null && saved.status == "pending_payment")
+                    continueLabel = "Continue to PayFast sandbox",
+                    allowContinue = saved.status == "pending_payment")
                 step == "payment" -> PaymentMethodScreen(order, details, method,
                     onMethodSelected = { methodName = it.name; vm.edit() }, onBack = back,
                     onContinue = { vm.submit(order, details, it) })

@@ -1,6 +1,6 @@
 # Sector 4 pending orders
 
-The Android `CheckoutScreen` accepts an `OrderReview` from Cart and calls these endpoints using the signed-in customer's Firebase token. It shows the server total before handing off through `onOrderConfirmed`. Connect this screen from the Cart route; `CheckoutFlowPreview` remains a separate sample with no network requests. Hosted checkout and Firestore writes require integration testing. For payment endpoints and server settings, see [PayFast sandbox setup](payfast-setup.md).
+The Android `CheckoutScreen` accepts an `OrderReview` and `onBackToCart` callback from Cart. It submits the order using the signed-in customer's Firebase token, shows the server total, then opens PayFast sandbox after confirmation. Connect this screen from the Cart route; `CheckoutFlowPreview` remains a separate sample with no network requests. Hosted checkout and Firestore writes require integration testing. For payment endpoints and server settings, see [PayFast sandbox setup](payfast-setup.md).
 
 ## Required server setup
 
