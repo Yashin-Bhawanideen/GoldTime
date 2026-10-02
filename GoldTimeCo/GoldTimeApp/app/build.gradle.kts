@@ -21,7 +21,9 @@ android {
         debug {
             // Android emulator -> your PC's localhost:5000 (the ASP.NET API).
             // Physical phone: use your PC's LAN IP, e.g. "http://192.168.1.20:5000/"
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:5000/\"")
+            // other: "http://10.0.2.2:5000/"
+            buildConfigField("String", "API_BASE_URL", "\"http://192.168.1.20:5000/\"")
+
         }
         release {
             isMinifyEnabled = false

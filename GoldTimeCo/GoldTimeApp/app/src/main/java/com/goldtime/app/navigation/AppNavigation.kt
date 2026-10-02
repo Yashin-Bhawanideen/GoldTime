@@ -21,6 +21,7 @@ private object Routes {
     const val HOME = "home"
     const val REQUEST_QUOTE = "request_quote"
     const val BROWSE = "browse"
+    const val CART = "cart"
 }
 
 @Composable
@@ -91,7 +92,15 @@ fun AppNavigation() {
                     },
                     onBrowse = {
                         nav.navigate(Routes.BROWSE)
-                    }
+                    },
+                    onCart = {nav.navigate(Routes.CART)}
+                )
+            }
+
+            composable(Routes.CART) {
+                com.goldtime.app.ui.cart.CartScreen(
+                    onBack = {nav.popBackStack() },
+                    onCheckout = { /* do payment here */}
                 )
             }
 
