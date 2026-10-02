@@ -2,11 +2,18 @@ package com.goldtime.app.navigation
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.goldtime.app.data.AuthRepository
+import com.goldtime.app.data.CartRepository
+import com.goldtime.app.ui.checkout.CheckoutScreen
+import com.goldtime.app.ui.checkout.checkoutSnapshot
+import com.goldtime.app.ui.checkout.checkoutOrder
+import com.goldtime.app.ui.checkout.OrderReview
+import java.math.BigDecimal
 import com.goldtime.app.ui.auth.AuthViewModel
 import com.goldtime.app.ui.auth.LoginScreen
 import com.goldtime.app.ui.auth.RegisterScreen
@@ -22,6 +29,7 @@ private object Routes {
     const val REQUEST_QUOTE = "request_quote"
     const val BROWSE = "browse"
     const val CART = "cart"
+    const val CHECKOUT = "checkout"
 }
 
 @Composable
@@ -80,6 +88,7 @@ fun AppNavigation() {
                 HomeScreen(
                     onSignOut = {
                         AuthRepository.signOut()
+                        CartRepository.clearCart()
 
                         nav.navigate(Routes.LOGIN) {
                             popUpTo(Routes.HOME) {
@@ -100,8 +109,23 @@ fun AppNavigation() {
             composable(Routes.CART) {
                 com.goldtime.app.ui.cart.CartScreen(
                     onBack = {nav.popBackStack() },
-                    onCheckout = { /* do payment here */}
+                    onCheckout = {
+                        val items = CartRepository.items.value
+                        if (items.isNotEmpty()) {
+                            nav.currentBackStackEntry?.savedStateHandle?.set("checkoutItems",
+                                items.checkoutSnapshot(CartRepository.deliveryFee))
+                            nav.navigate(Routes.CHECKOUT) { launchSingleTop = true }
+                        }
+                    }
                 )
+            }
+
+            composable(Routes.CHECKOUT) { entry ->
+                val order = remember(entry) {
+                    nav.previousBackStackEntry?.savedStateHandle?.get<ArrayList<String>>("checkoutItems")
+                        ?.checkoutOrder() ?: OrderReview(emptyList(), BigDecimal.ZERO)
+                }
+                CheckoutScreen(order = order, onBackToCart = { nav.popBackStack() })
             }
 
             composable(Routes.REQUEST_QUOTE) {

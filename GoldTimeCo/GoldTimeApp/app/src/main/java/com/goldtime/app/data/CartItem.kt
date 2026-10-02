@@ -2,6 +2,7 @@ package com.goldtime.app.data
 
 import java.text.NumberFormat
 import java.util.Locale
+import java.util.Currency
 
 data class CartItem(
     val id: String,
@@ -14,6 +15,7 @@ data class CartItem(
 }
 
 fun Double.toZarFormat(): String {
-    val formatter = NumberFormat.getCurrencyInstance(Locale("en", "ZAR"))
-    return formatter.format(this).replace("ZAR", "R").trim()
+    val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("en-ZA"))
+    formatter.currency = Currency.getInstance("ZAR")
+    return formatter.format(this)
 }

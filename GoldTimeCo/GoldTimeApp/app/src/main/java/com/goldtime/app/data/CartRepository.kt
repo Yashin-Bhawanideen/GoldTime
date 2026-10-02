@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 object CartRepository {
+    const val deliveryFee = 150.0
     private val _items = MutableStateFlow<List<CartItem>>(emptyList())
     val items: StateFlow<List<CartItem>> = _items.asStateFlow()
 
@@ -14,7 +15,7 @@ object CartRepository {
             val existing = currentList.find { it.id == asset.id }
             if (existing != null) {
                 currentList.map {
-                    if (it.id == asset.id) it.copy(quantity = it.quantity + 1) else it
+                    if (it.id == asset.id) it.copy(quantity = (it.quantity + 1).coerceAtMost(99)) else it
                 }
             } else {
                 currentList + CartItem(
@@ -29,7 +30,7 @@ object CartRepository {
 
     fun incrementQuantity(id: String) {
         _items.update { list ->
-            list.map { if (it.id == id) it.copy(quantity = it.quantity + 1) else it }
+            list.map { if (it.id == id) it.copy(quantity = (it.quantity + 1).coerceAtMost(99)) else it }
         }
     }
 

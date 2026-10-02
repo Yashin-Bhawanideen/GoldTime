@@ -44,9 +44,7 @@ import com.goldtime.app.ui.components.GoldButton
 import com.goldtime.app.ui.components.RemoteImage
 import com.goldtime.app.ui.theme.GoldColors
 import com.goldtime.app.ui.theme.HeadingFont
-import androidx.compose.ui.tooling.preview.Preview
-import android.R.attr.fontWeight
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.foundation.layout.systemBarsPadding
 
 @Composable
 fun CartScreen(
@@ -60,6 +58,7 @@ fun CartScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(GoldColors.Background)
+            .systemBarsPadding()
 
     ) {
         Row(
@@ -93,6 +92,9 @@ fun CartScreen(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(horizontal = 16.dp,vertical = 8.dp)
         )
+
+        Text("Sandbox only: displayed prices are samples. Confirm the final total at checkout.",
+            color = GoldColors.Gold, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
 
         if (state.items.isEmpty()) {
             Box(

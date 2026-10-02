@@ -25,7 +25,7 @@ class CartViewModel : ViewModel() {
     val state: StateFlow<CartUiState>  = CartRepository.items.map {
         list ->
         val subtotal = list.sumOf { it.totalAmount }
-        val delivery = if (list.isNotEmpty()) 150.0 else 0.0
+        val delivery = if (list.isNotEmpty()) CartRepository.deliveryFee else 0.0
         CartUiState(
             items = list,
             subtotal = subtotal,
