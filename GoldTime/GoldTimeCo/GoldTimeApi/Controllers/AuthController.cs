@@ -36,7 +36,8 @@ public class AuthController(FirestoreDb db) : ControllerBase
         await db.Collection("users").Document(uid).SetAsync(profile);
         return Ok(profile);
     }
-
+// GET /api/credentials
+// Returns every credential belonging to the authenticated user
     [HttpGet("me")]
     public async Task<IActionResult> Me()
     {
@@ -49,3 +50,14 @@ public class AuthController(FirestoreDb db) : ControllerBase
         return Ok(snapshot.ConvertTo<UserProfile>());
     }
 }
+/*
+ References
+Gideon, 2012. Difference between ApiController and Controller in ASP.NET MVC. [Online] 
+Available at: https://stackoverflow.com/questions/9494966/difference-between-apicontroller-and-controller-in-asp-net-mvc
+Microsoft, 2024. Tutorial: Create a controller-based web API with ASP.NET Core. [Online] 
+Available at: https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-10.0&tabs=visual-studio
+Microsoft, 2026. Create web APIs with ASP.NET Core. [Online] 
+Available at: https://learn.microsoft.com/en-us/aspnet/core/web-api/?view=aspnetcore-10.0
+
+
+ */
