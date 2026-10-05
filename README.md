@@ -25,11 +25,11 @@ Payments: Managed by PayFast, an API-integrated sandbox environment.
 The YouTube links explaining how the code and application work are included in the PowerPoint presentation. They are also listed here for convenience:
 
 YouTube Links: 
-Login, Register and Home Page: https://youtu.be/hJtkLsMFPWs 
-Product page, product details and quote form: https://youtu.be/cJvfos4OMO4 
-Cart page: https://youtu.be/7BuSTCY9ebQ 
-Checkout Procedure: https://youtu.be/xdkp0lNnlsU 
-Profile Page & order history: https://youtu.be/a3DNP-A6znU 
+- Login, Register and Home Page: https://youtu.be/hJtkLsMFPWs 
+- Product page, product details and quote form: https://youtu.be/cJvfos4OMO4 
+- Cart page: https://youtu.be/7BuSTCY9ebQ 
+- Checkout Procedure: https://youtu.be/xdkp0lNnlsU 
+- Profile Page & order history: https://youtu.be/a3DNP-A6znU 
 
 # Key Features and Functionality
 What Is the App?
