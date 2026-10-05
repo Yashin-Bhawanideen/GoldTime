@@ -59,6 +59,8 @@ data class OrderDraft(
             )
             .put("paymentMethod", method.name)
 
+            //creates a SHA-256 hash of the order contents (without the request ID)
+    //the app can use it to tell whether the order details have changed since the last attempt
     fun fingerprint(): String =
         MessageDigest.getInstance("SHA-256")
             .digest(
@@ -70,7 +72,7 @@ data class OrderDraft(
                 "%02x".format(it)
             }
 }
-
+//an order as saved and returned by the server
 data class SavedOrder(
     val id: String,
     val order: OrderReview,
@@ -85,7 +87,11 @@ data class SavedOrder(
     // The API sends CreatedAtUtc for every order.
     val createdAtUtc: String = ""
 ) {
-
+//true only when the app can confirm the payment is genuinely complete:
+    //status is "sandbox_paid", the environment is "sandbox", the PayFast payment ID is 1 to 30 digits,
+    //and the paid time is a valid UTC timestamp
+    //this is a check on the data from the server; the server itself decides whether an order is paid
+   
     val sandboxPaymentConfirmed: Boolean
         get() =
             status == "sandbox_paid" &&
@@ -484,4 +490,9 @@ https://github.com/square/okhttp/blob/parent-4.12.0/okhttp/src/main/kotlin/okhtt
 JetBrains. n.d. suspendCancellableCoroutine. [Online]. Available at:
 https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/suspend-cancellable-coroutine.html
 [Accessed 1 October 2026].
+// References
+// Android, 2026. Android API client-side caching guidelines. [Online] 
+// Available at: https://source.android.com/docs/setup/contribute/api-guidelines/caching
+// stackoverflow, 2019. What is apiclient in Android?. [Online] 
+// Available at: https://stackoverflow.com/questions/59057686/what-is-apiclient-in-android
 */
