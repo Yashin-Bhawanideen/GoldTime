@@ -45,7 +45,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-
+//the profile screen: the user's details, their pending cart items and their order history
+//the navigation callbacks are passed in so this screen does not need to know about the NavController
 @Composable
 fun ProfileScreen(
     onBack: () -> Unit,
@@ -55,9 +56,10 @@ fun ProfileScreen(
     onOrders: () -> Unit,
     vm: ProfileViewModel = viewModel()
 ) {
-
+//collectAsStateWithLifecycle turns the ViewModel's StateFlow into Compose state
+    //and stops collecting while the screen is not visible, which saves battery
     val state by vm.state.collectAsStateWithLifecycle()
-
+ //the cart is also observed so the pending items update automatically when the cart changes
     val cartItems by CartRepository.items.collectAsStateWithLifecycle()
 
     Column(
@@ -251,7 +253,7 @@ fun ProfileScreen(
                 )
             }
 
-
+            //loading message while the orders are being fetched
             if (
                 !state.loading &&
                 cartItems.isEmpty() &&
@@ -282,7 +284,7 @@ fun ProfileScreen(
     }
 }
 
-
+//the bar at the top with the app name on the left and the four navigation links on the right
 @Composable
 private fun TopNavigation(
     onHome: () -> Unit,
@@ -656,7 +658,7 @@ private fun CartPendingRow(
     }
 }
 
-
+//one clickable text link in the top navigation bar
 @Composable
 private fun OrderHistoryRow(
     order: SavedOrder
@@ -750,7 +752,7 @@ private fun OrderHistoryRow(
     }
 }
 
-
+//the card showing the user's avatar icon, name, email and membership badge
 @Composable
 private fun StatusBadge(
     status: String

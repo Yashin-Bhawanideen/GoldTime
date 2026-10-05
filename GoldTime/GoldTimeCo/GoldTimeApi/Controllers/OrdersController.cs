@@ -12,8 +12,11 @@ namespace GoldTimeApi.Controllers;
 [Authorize]
 public class OrdersController(IOrderStore orders, ILogger<OrdersController> logger) : ControllerBase
 {
+//gets the signed-in user's ID from the token claims
+//Firebase tokens use "user_id", so fall back to the standard "sub" claim if it is missing
     private string? Uid => User.FindFirstValue("user_id") ?? User.FindFirstValue("sub");
 
+//POST api/orders - creates a new checkout order for the signed-in user
     [HttpPost]
     [RequestSizeLimit(32768)]
     public async Task<IActionResult> Create(CreateOrderRequest request, CancellationToken cancellationToken)
@@ -64,7 +67,7 @@ public class OrdersController(IOrderStore orders, ILogger<OrdersController> logg
             );
         }
     }
-
+    //GET api/orders/{id} - returns a single order, only if it belongs to the signed-in user
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(
         string id,
@@ -97,7 +100,8 @@ public class OrdersController(IOrderStore orders, ILogger<OrdersController> logg
             );
         }
     }
-
+//maps the CheckoutOrder entity to an anonymous response object
+//this controls exactly which fields the app receives (e.g. UserId is intentionally left out)
     private static object ToResponse(CheckoutOrder order) => new
     {
         order.Id,
@@ -115,3 +119,14 @@ public class OrdersController(IOrderStore orders, ILogger<OrdersController> logg
         order.PaidAtUtc
     };
 }
+/*
+ References
+Gideon, 2012. Difference between ApiController and Controller in ASP.NET MVC. [Online] 
+Available at: https://stackoverflow.com/questions/9494966/difference-between-apicontroller-and-controller-in-asp-net-mvc
+Microsoft, 2024. Tutorial: Create a controller-based web API with ASP.NET Core. [Online] 
+Available at: https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-10.0&tabs=visual-studio
+Microsoft, 2026. Create web APIs with ASP.NET Core. [Online] 
+Available at: https://learn.microsoft.com/en-us/aspnet/core/web-api/?view=aspnetcore-10.0
+
+
+ */

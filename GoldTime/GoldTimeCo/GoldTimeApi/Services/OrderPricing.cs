@@ -5,11 +5,13 @@ using System.Text.Json;
 using GoldTimeApi.Models;
 
 namespace GoldTimeApi.Services;
-
+//custom exception for expected checkout failures (bad input, out of stock, etc.)
+//it carries an HTTP status code so the controllers can turn it straight into a response
 public class CheckoutException(int statusCode, string message) : Exception(message)
 {
     public int StatusCode { get; } = statusCode;
 }
+//static helper class that validates orders and calculates prices on the server
 
 public static class OrderPricing
 {
@@ -22,7 +24,7 @@ public static class OrderPricing
         if (!Valid(request) || request.RequestId == Guid.Empty || request.Items.Any(x => x is null || !Valid(x))
             || !Valid(request.Delivery) || request.Items.Select(x => x.ProductId).Distinct().Count() != request.Items.Count)
             throw new CheckoutException(400, "Provide valid items, delivery details, payment method and a request ID. Each product must appear once.");
-
+         //removes spaces, brackets and dashes from the phone number, then removes a leading +, so only digits should remain
         var phone = string.Concat(request.Delivery.Phone.Where(c => !" ()-".Contains(c))).TrimStart('+');
         if (request.Delivery.Phone.Count(c => c == '+') > 1
             || (request.Delivery.Phone.Contains('+') && !request.Delivery.Phone.TrimStart().StartsWith('+'))
@@ -30,10 +32,13 @@ public static class OrderPricing
             || !Provinces.Contains(request.Delivery.Province.Trim(), StringComparer.OrdinalIgnoreCase))
             throw new CheckoutException(400, "Provide a valid phone number and South African province.");
     }
-
+//runs the data annotation attributes (e.g. [Required], [StringLength]) on an object
+//the final true means all properties are validated, not just the required ones
     private static bool Valid(object value) => value is not null
         && Validator.TryValidateObject(value, new ValidationContext(value), null, true);
 
+    //builds a repeatable order ID from the user ID and the app's request ID
+//the same user sending the same request ID always gets the same order ID, which prevents duplicate orders on retries
     public static string OrderId(string userId, Guid requestId) => Hash(userId + "/" + requestId.ToString("D"));
 
     public static string Fingerprint(CreateOrderRequest request) => Hash(JsonSerializer.Serialize(new
@@ -78,3 +83,14 @@ public static class OrderPricing
         return order;
     }
 }
+//References
+//backendless, 2026. How To Create an API Service. [Online]
+//Available at: https://backendless.com/docs/codeless/codeless_how_to_create_an_api_service.html
+//Kondov, A., 2024. Building a Proper REST API. [Online]
+//Available at: https://alexkondov.com/full-stack-tao-proper-rest-api/
+//RaidasGrisk, 2020. How to structure API service app architecture. [Online]
+//Available at: http://stackoverflow.com/questions/62283664/how-to-structure-api-service-app-architecture
+//Sheltongraves, 2020. Build REST APIs in three steps with API Management and Azure Functions. [Online]
+//Available at: https://techcommunity.microsoft.com/blog/appsonazureblog/build-rest-apis-in-three-steps-with-api-management-and-azure-functions/1869627
+
+

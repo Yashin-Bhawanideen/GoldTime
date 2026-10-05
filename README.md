@@ -1,61 +1,74 @@
-# Gold Time Co
+# GoldTimeCo
+# INSY7315 – Task 2 | Emeris 2026
 
-# Basic Information
+# Members
 
-All memebers have access to both the Azure API hosted services Firebase database and blob storage (Azure for images), I have added you guys using the emails you have sent to the group:
+- ST10444715	Keegan Ewan Tromp
+- ST10434249	Richard Hein
+- ST10443463	Yashin Bhawanideen
+- ST10443090	Amir Muller
+- ST10450208	Mishal Bhikha
 
-- trompkeegan@gmail.com
-- Mbhikha@outlook.com
-- Heinrc0@gmail.com
-- Amir.muller@gmail.com
-
-The API is Cloud hosted on Azure
-The Android App is hosted on Firebase
-
-# How to run the program
-
-Open Android Studio and choose the GoldTimeCo folder, in the folder choose the GoldTimeApp (android) folder, Android studio will sync the project automatically. 
-
--> A more comprehensive path: Android studio/Open
-                                            /GoldTimeCo
-                                             /GoldTimeApp
+# File paths
+Json files are separately commited, if you want to run the application you will need to do this first:
+- firebase-service-account key location in the file: C:\GoldTime\GoldTimeCo\GoldTimeApi
+- google-service key location in the file: C:\GoldTime\GoldTimeCo\GoldTimeApp\app
 
 
-The API is hosted already therefore, you don't need to run the API separately. You can run the app straight from the Android Studio platform onto your emulator or physical device.
+# Where the Application Is Hosted
+API: The ASP.NET Web API is accessible from any device, not just a local computer, because it is hosted on Azure App Service.
+Product photos are kept in Azure. Both the images and the API remain lightweight because the API delivers the image links rather than serving the files.
+User data and authentication are handled by Firebase (password and email authentication) and kept in Firebase Firestore.
+Payments: Managed by PayFast, an API-integrated sandbox environment.
 
-# If there are any changes in the API code
+# YouTube Links
+The YouTube links explaining how the code and application work are included in the PowerPoint presentation. They are also listed here for convenience:
 
-If you have added any changes to the code for the API, You have to re-publish the API to Azure again, Here are some image to help you. 2 Simple ways:
+YouTube Links: 
+- Login, Register and Home Page: https://youtu.be/hJtkLsMFPWs 
+- Product page, product details and quote form: https://youtu.be/cJvfos4OMO4 
+- Cart page: https://youtu.be/7BuSTCY9ebQ 
+- Checkout Procedure: https://youtu.be/xdkp0lNnlsU 
+- Profile Page & order history: https://youtu.be/a3DNP-A6znU 
 
-1. Click Publish and the API will re-publish
+# Key Features and Functionality
+What Is the App?
+For Gold Time Co., a business that purchases and sells watches, gold and silver bars, and bullion like Krugerrands and collectibles, GoldTimeCo is an Android mobile trading platform. Instead of calling the company directly, customers use mobile phones to register, peruse the complete product catalogue, and make purchases or sales. A dashboard is provided to managers so they may examine and manage the ensuing orders, payments, and bids.
 
-<img width="1692" height="800" alt="image" src="https://github.com/user-attachments/assets/4af22a3a-1203-4216-b721-1f612ff7b60d" />
+Front End
+The client program is a native Android application made with Kotlin in Android Studio. Users can view the company's assets on the main page after registering or logging in. A navigation bar connects main, Shop, Sell Gold, and Orders. Each item's weight, purity, condition, and stock availability are shown in the product browser. Users can add items to a cart, adjust quantities, see a running total, and get a quote prior to checking out. A delivery form, an order review, payment, and a confirmation page are all part of the checkout process.
 
-2. This tab  in your browser will open, and that's how you know its working
+APIs and Back End
+On the back end, the application communicates with an ASP.NET Web API. It manages orders, quotation requests, and sale requests in addition to providing product data. The manager dashboard receives new orders and quotes. The API integrates PayFast, a South African payment gateway that takes card and rapid EFT payments. We utilised the PayFast sandbox environment to securely demonstrate the complete payment procedure. Before sending users back to a success page, the software directs them to PayFast for payment.
 
-<img width="1696" height="690" alt="image" src="https://github.com/user-attachments/assets/e682c474-4b1d-4aa8-875d-6b47750b99b1" />
+Data and Hosting
+User accounts are managed by Firebase email and password authentication, and user data is stored in Firebase Firestore. The API is accessible from any device since it is hosted on Azure App Service. Product images are stored on Azure, and the API provides URLs to them.
 
-# How to add images
+# How the System Meets the Requirements and Non-Functional Expectations
+Task 1's basic functional requirements are met by the system. Consumers can use PayFast to safely pay after registering, logging in, browsing products, filtering categories, adding items to a basket, and requesting estimates. Without having to speak with customers, managers may review incoming orders and bids.
 
-Watch this video on how to add the images to Azure then using the provided url in the code: 
+- Security: Firebase Authentication handles user credentials, eliminating the need to keep raw passwords, and PayFast's tokenisation and encryption of card data enhance security.
+- Performance and scalability are supported by cloud hosting on Firebase and Azure.
+reliability: Managed cloud services offer reliability.
+- Usability is given priority in a simple customer flow (browse, quotation, add to cart, check out).
+- Maintainability: The Android client and Web API are kept apart, allowing for independent changes in accordance with the service-oriented architecture outlined in the design documentation.
 
-https://youtu.be/y8FURnYPEFA
+# Technical Decisions, Design Choices and Challenges Overcome
+Technical Choices
+For a modern, native Android experience, use Kotlin with Android Studio.
+ASP.NET Web API: For a well-organised, secure back end that complemented the team's knowledge of.NET.
+Firebase Firestore: Because of its flexible document format, which works well with orders, sell requests, and products.
+Firebase Authentication: To handle accounts securely.
+PayFast: We chose not to create our own payment system since it is plug-and-play, controls compliance, and is tailored for the South African market.
 
-* Images can be jpeg, jpg or png
-* Ensure that the name of you images don't have spaces: 
-eg. Silver-bar (correct)
-    Sliver bar (not correct)
+# Design Choices
+Users are prevented from getting lost with a simple checkout procedure and an easy-to-use navigation bar.
+Before obtaining a quote or making a purchase, buyers may make educated judgements by viewing product information up front.
 
-# JSON files
-
-Place both the files where its supposed to be, same like we did in Prog7314:
-
-* google-services.json location path: GoldTimeCo/GoldTimeApp/app (download the Android configuration for the correct Firebase project).
-
-* For local API credentials, keep the service-account file outside the repository and set GOOGLE_APPLICATION_CREDENTIALS to its absolute path. On Azure, set Firebase__CredentialsJson and Firebase__ProjectId in application settings. Do not commit service-account keys or put them in Android.
-
-# Videos
-
-Once you are done with your part, please take create a video of you explaining what you did for your part and how the code works. Send the mp4 video file to (Yashin - 079 375 3759), for the PowerPoint Presentation. Yashin will convert the video to a Youtube link.
-
+# Challenges Overcome
+changed the API hosting from Firebase to Azure App Service, which is a more suitable and reliable configuration for an ASP.NET API.
+To enable the API to transmit links instead of files, product images were moved from the local directories of the API onto Azure storage.
+Instead of only using an emulator, the app was set up and tested on a real phone, which showed connection issues that needed to be resolved.
+incorporated PayFast's sandbox into the API to ensure a seamless payment procedure.
+Resolved Gradle sync problems brought on by the Android Studio project structure and project folder layout.
 

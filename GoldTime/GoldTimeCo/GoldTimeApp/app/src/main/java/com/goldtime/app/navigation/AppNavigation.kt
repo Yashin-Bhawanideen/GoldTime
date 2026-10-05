@@ -26,7 +26,8 @@ import com.goldtime.app.ui.profile.ProfileScreen
 import com.goldtime.app.ui.quote.RequestQuoteScreen
 import com.goldtime.app.ui.theme.GoldColors
 import java.math.BigDecimal
-
+//the route names for every screen in one place, so a typo in a route string cannot happen
+//private object: only this file can use these names
 private object Routes {
 
     const val LOGIN = "login"
@@ -39,7 +40,7 @@ private object Routes {
     const val CHECKOUT = "checkout"
     const val PROFILE = "profile"
 }
-
+//the root composable that decides which screen is shown and how the user moves between screens
 @Composable
 fun AppNavigation() {
 
@@ -55,7 +56,7 @@ fun AppNavigation() {
         } else {
             Routes.LOGIN
         }
-
+//Surface gives every screen the app's background colour
     Surface(
         color = GoldColors.Background
     ) {
@@ -323,3 +324,14 @@ fun AppNavigation() {
         }
     }
 }
+// References
+// developers, A., 2025. Create a navigation controller. [Online] 
+// Available at: https://developer.android.com/guide/navigation/navcontroller
+// Geek4geeks, 2025. Navigation Drawer in Android. [Online] 
+// Available at: https://www.geeksforgeeks.org/android/navigation-drawer-in-android/
+// studio, A., 2021. Navigation Editor. [Online] 
+// Available at: https://developer.android.com/guide/navigation/design/editor
+// studio, A., 2026. Understand and implement the basics. [Online] 
+// Available at: https://developer.android.com/guide/navigation/navigation-3/basics
+
+

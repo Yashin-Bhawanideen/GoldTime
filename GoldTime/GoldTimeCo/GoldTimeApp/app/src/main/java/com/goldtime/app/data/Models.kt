@@ -1,19 +1,21 @@
 package com.goldtime.app.data
 
+//data class: Kotlin automatically generates equals, hashCode, toString and copy for classes that only hold data
+//the content of the banner at the top of the home screen
 data class HeroContent(
     val badge: String,
     val title: String,
     val subtitle: String,
     val imageUrl: String?
 )
-
+//one featured product shown on the home screen
 data class FeaturedAsset(
     val id: String,
     val name: String,
     val cta: String,
     val imageUrl: String?
 )
-
+//everything the home screen needs: the hero banner and the list of featured assets
 data class HomeData(
     val hero: HeroContent,
     val featured: List<FeaturedAsset>
@@ -36,7 +38,8 @@ data class HomeData(
         )
     }
 }
-
+//custom exception for errors from the API or the app's own checks
+//its message is written for the user, and toFriendlyMessage() shows it on screen
 class ApiException(message: String) : Exception(message)
 
 data class UserProfile(

@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---- Firebase project id (appsettings.json locally, app setting Firebase__ProjectId on Azure) ----
+// Firebase project id (appsettings.json locally, app setting Firebase__ProjectId on Azure) 
+
 var projectId = builder.Configuration["Firebase:ProjectId"];
 if (string.IsNullOrWhiteSpace(projectId) || projectId == "YOUR_FIREBASE_PROJECT_ID")    //don't change to the actual friebase ID, this checks if the API can't find the Firebase project ID, it will throw the error message
 {
@@ -20,7 +21,6 @@ builder.Services.AddScoped<GoldTimeApi.Services.ISandboxPaymentStore, GoldTimeAp
 builder.Services.AddHttpClient<GoldTimeApi.Services.PayFastService>(client => client.Timeout = TimeSpan.FromSeconds(20))
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
 
-// ---- Firestore ----
 // Azure:     the whole service-account JSON is stored in the app setting Firebase__CredentialsJson
 // Local PC:  falls back to the GOOGLE_APPLICATION_CREDENTIALS environment variable
 builder.Services.AddSingleton(_ =>
@@ -34,7 +34,8 @@ builder.Services.AddSingleton(_ =>
     return FirestoreDb.Create(projectId);
 });
 
-// ---- Firebase ID-token validation ----
+//Firebase ID-token validation
+
 var issuer = $"https://securetoken.google.com/{projectId}";
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -53,7 +54,8 @@ builder.Services
     });
 builder.Services.AddAuthorization();
 
-// ---- Needed when running behind Azure / Firebase Hosting / Cloud Run ----
+// Needed when running behind Azure / Firebase Hosting / Cloud Run
+
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor

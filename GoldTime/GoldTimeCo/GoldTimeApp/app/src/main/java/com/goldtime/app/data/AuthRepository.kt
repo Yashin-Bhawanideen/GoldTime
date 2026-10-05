@@ -16,6 +16,9 @@ object AuthRepository {
 
     val isLoggedIn: Boolean get() = auth.currentUser != null
 
+    //signs the user in with their email and password
+    //await() turns the Firebase Task into a suspend call; a wrong password or unknown email throws an exception
+    //that the UI turns into a message with toFriendlyMessage()
     suspend fun signIn(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).await()
     }
@@ -47,11 +50,13 @@ object AuthRepository {
             throw e
         }
     }
-
+ //sends a password reset email to the given address
     suspend fun sendPasswordReset(email: String) {
         auth.sendPasswordResetEmail(email).await()
     }
-
+//returns the signed-in user's current ID token, which is sent to the API as a Bearer token
+    //false means a cached token is reused and only refreshed if it has expired
+    //throws an error if nobody is signed in
     suspend fun idToken(): String =
         auth.currentUser?.getIdToken(false)?.await()?.token
             ?: throw ApiException("Not signed in.")
@@ -59,6 +64,8 @@ object AuthRepository {
     fun signOut() = auth.signOut()
 }
 
+//extension function that turns an exception into a short, readable message for the user
+//the order of the branches matters because the first matching type is used
 fun Throwable.toFriendlyMessage(): String = when (this) {
     is FirebaseAuthWeakPasswordException -> "Password is too weak. Use at least 8 characters."
     is FirebaseAuthInvalidUserException -> "No account found with that email."
@@ -69,3 +76,14 @@ fun Throwable.toFriendlyMessage(): String = when (this) {
     is java.io.IOException -> "Can't reach the server. Please check your connection."
     else -> "Something went wrong. Please try again."
 }
+//References
+//developers, A., 2026. About Sign in with Google. [Online]
+//Available at: https://developer.android.com/identity/sign-in/credential-manager-siwg
+//Developers, A., 2026. Show a biometric authentication dialog. [Online]
+//Available at: https://developer.android.com/identity/sign-in/biometric-auth
+//Erez, 2025. trying to implement google sign in from firebase authentication in android studio.. [Online]
+//Available at: https://stackoverflow.com/questions/79606978/trying-to-implement-google-sign-in-from-firebase-authentication-in-android-studi
+//Geek4geeks, 2025. Google Signing using Firebase Authentication in Android. [Online]
+//Available at: https://www.geeksforgeeks.org/android/google-signing-using-firebase-authentication-in-android-using-java/
+//walther, F., 2019. What is the USE_BIOMETRIC permission needed for?. [Online]
+//Available at: https://stackoverflow.com/questions/59237106/what-is-the-use-biometric-permission-needed-for

@@ -18,6 +18,8 @@ object ApiClient {
     private const val API_BASE_URL =
         "http://10.0.2.2:5000" //azure api hosted
 
+    //one shared HTTP client for all requests
+    //gives up if a connection takes longer than 15 seconds to open or a response takes longer than 20 seconds to arrive
     private val client = OkHttpClient.Builder()
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(20, TimeUnit.SECONDS)
@@ -27,6 +29,8 @@ object ApiClient {
 
     private val orders = OrderApi(client, API_BASE_URL)
 
+    //creates a checkout order on the server
+    //requestId is sent with the order so a retry of the same request does not create a duplicate (see OrdersController)
     suspend fun createOrder(idToken: String, draft: OrderDraft, requestId: String): SavedOrder =
         orders.create(idToken, draft, requestId)
 
@@ -119,6 +123,7 @@ object ApiClient {
                 imageUrl = o.optImage("imageUrl")
             )
         }
+        //converts the home screen JSON into HomeData: a hero section plus a list of featured assets
         return HomeData(
             hero = HeroContent(
                 badge = hero.getString("badge"),
@@ -129,7 +134,15 @@ object ApiClient {
             featured = featured
         )
     }
-
+//extension function that reads an optional image URL
+    //returns null if the value is missing, JSON null or a blank string, so the UI can show a placeholder instead
     private fun JSONObject.optImage(key: String): String? =
         if (isNull(key)) null else getString(key).takeIf { it.isNotBlank() }
 }
+// References
+// Android, 2026. Android API client-side caching guidelines. [Online] 
+// Available at: https://source.android.com/docs/setup/contribute/api-guidelines/caching
+// stackoverflow, 2019. What is apiclient in Android?. [Online] 
+// Available at: https://stackoverflow.com/questions/59057686/what-is-apiclient-in-android
+
+
