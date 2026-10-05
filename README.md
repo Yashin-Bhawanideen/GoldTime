@@ -3,11 +3,11 @@
 
 # Members
 
-ST10444715	Keegan Ewan Tromp
-ST10434249	Richard Hein
-ST10443463	Yashin Bhawanideen
-ST10443090	Amir Muller
-ST10450208	Mishal Bhikha
+- ST10444715	Keegan Ewan Tromp
+- ST10434249	Richard Hein
+- ST10443463	Yashin Bhawanideen
+- ST10443090	Amir Muller
+- ST10450208	Mishal Bhikha
 
 # File paths
 Json files are separately commited, if you want to run the application you will need to do this first:
