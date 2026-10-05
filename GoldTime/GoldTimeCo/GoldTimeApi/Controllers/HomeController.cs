@@ -11,6 +11,7 @@ public class HomeController(IConfiguration config) : ControllerBase
 {
     private const string HeroFile = "img_background.jpg";
 
+    //Stored images are called from Azure blob storage to display in the app
     [HttpGet]
     public IActionResult Get()
     {
@@ -31,7 +32,7 @@ public class HomeController(IConfiguration config) : ControllerBase
         return Ok(new HomeDto(hero, featured));
     }
 
-   
+   //this method allows to use only the name of the file image instead of using the full url of the imgae file
     private string? ImageUrl(string fileName)
     {
         var baseUrl = config["Images:BaseUrl"];
@@ -40,3 +41,14 @@ public class HomeController(IConfiguration config) : ControllerBase
         return baseUrl.TrimEnd('/') + "/" + Uri.EscapeDataString(fileName);
     }
 }
+/*
+ References
+Gideon, 2012. Difference between ApiController and Controller in ASP.NET MVC. [Online] 
+Available at: https://stackoverflow.com/questions/9494966/difference-between-apicontroller-and-controller-in-asp-net-mvc
+Microsoft, 2024. Tutorial: Create a controller-based web API with ASP.NET Core. [Online] 
+Available at: https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-10.0&tabs=visual-studio
+Microsoft, 2026. Create web APIs with ASP.NET Core. [Online] 
+Available at: https://learn.microsoft.com/en-us/aspnet/core/web-api/?view=aspnetcore-10.0
+
+
+ */
