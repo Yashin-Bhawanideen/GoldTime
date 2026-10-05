@@ -91,13 +91,26 @@ class OrderApi(private val client: OkHttpClient, private val baseUrl: String, pr
                 val result = runCatching {
                     //closes the response even when the server returns an error (Square, n.d.)
                     response.use {
-                        if (!it.isSuccessful) throw OrderApiException(it.code, when (it.code) {
-                            400 -> "Check your delivery details and cart quantities."
-                            401, 403 -> "Please sign in again before continuing."
-                            404 -> "The order service or order could not be found."
-                            409 -> "The order may have expired, changed or already been paid. Check its status before trying again."
-                            else -> "The order service is unavailable. Please retry."
-                        })
+                        if (!it.isSuccessful) {
+                            //only recognises known server errors; never displays raw responses or credentials
+                            val detail = runCatching {
+                                JSONObject(it.peekBody(4096).string()).optString("detail")
+                            }.getOrDefault("")
+                            val message = when {
+                                it.code == 503 && detail == "Delivery pricing is not configured. Please try again later." ->
+                                    "Delivery pricing is not configured on the server."
+                                it.code == 503 && detail == "Could not save your order. Retry with the same request ID." ->
+                                    "The server could not save your order. Please retry."
+                                else -> when (it.code) {
+                                    400 -> "Check your delivery details and cart quantities."
+                                    401, 403 -> "Please sign in again before continuing."
+                                    404 -> "The order service or order could not be found."
+                                    409 -> "The order may have expired, changed or already been paid. Check its status before trying again."
+                                    else -> "The order service is unavailable. Please retry."
+                                }
+                            }
+                            throw OrderApiException(it.code, "$message (HTTP ${it.code})")
+                        }
                         try { parse(JSONObject(it.body?.string().orEmpty())) }
                         catch (e: Exception) { throw IOException("The server returned incomplete order details. Please retry.", e) }
                     }
