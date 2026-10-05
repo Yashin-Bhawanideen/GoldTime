@@ -2,9 +2,12 @@ using System.Net;
 using System.Text;
 
 namespace GoldTimeApi.Services;
+//service that connects the PayFast controller to the order store and the PayFast sandbox
+//primary constructor: the HTTP client, the sandbox payment store and the app configuration are injected through dependency injection
 
 public class PayFastService(HttpClient client, ISandboxPaymentStore orders, IConfiguration configuration)
 {
+    //prepares a payment for an order and returns the signed form the app sends the user to PayFast with
     public async Task<PayFastForm> BeginAsync(string orderId, string userId, CancellationToken token)
     {
         var settings = PayFastSettings.Read(configuration);
@@ -12,6 +15,7 @@ public class PayFastService(HttpClient client, ISandboxPaymentStore orders, ICon
         return PayFastProtocol.CreateForm(order, settings);
     }
 
+    //handles a notification (ITN) from PayFast; the order is only updated if every check passes
     public async Task NotifyAsync(IReadOnlyList<KeyValuePair<string, string>> fields, IPAddress? source, CancellationToken token)
     {
         var settings = PayFastSettings.Read(configuration);
