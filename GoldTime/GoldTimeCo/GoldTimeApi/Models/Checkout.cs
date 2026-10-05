@@ -3,6 +3,7 @@ using Google.Cloud.Firestore;
 
 namespace GoldTimeApi.Models;
 
+//For the order request or create the order request to store on firebase
 public class CreateOrderRequest
 {
     public Guid RequestId { get; set; }
@@ -10,13 +11,14 @@ public class CreateOrderRequest
     [Required] public DeliveryAddress Delivery { get; set; } = new();
     [Required, RegularExpression("^(CARD|INSTANT_EFT)$")] public string PaymentMethod { get; set; } = "";
 }
+//Lists the order or item in the order review, lists it in this format
 
 public class OrderItemRequest
 {
     [Required, RegularExpression("^[a-zA-Z0-9_-]{1,100}$")] public string ProductId { get; set; } = "";
     [Range(1, 99)] public int Quantity { get; set; }
 }
-
+//this stores the details for the delievry form
 [FirestoreData]
 public class DeliveryAddress
 {
@@ -33,6 +35,7 @@ public class DeliveryAddress
         City = City.Trim(), Province = Province.Trim(), PostalCode = PostalCode.Trim()
     };
 }
+//stores the item or product that user can view on the order review
 
 [FirestoreData]
 public class CheckoutProduct
@@ -72,3 +75,10 @@ public class CheckoutOrder
     [FirestoreProperty] public string PayFastPaymentId { get; set; } = "";
     [FirestoreProperty] public DateTime? PaidAtUtc { get; set; }
 }
+/*
+ References
+Arianme, n.d. Models in ASP.NET Core Web API. [Online] 
+Available at: https://stackoverflow.com/questions/66576344/models-in-asp-net-core-web-api
+
+
+ */
