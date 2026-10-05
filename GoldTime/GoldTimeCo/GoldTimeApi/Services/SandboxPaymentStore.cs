@@ -8,12 +8,15 @@ public interface ISandboxPaymentStore
     Task<CheckoutOrder> PrepareAsync(string orderId, string userId, CancellationToken token);
     Task ConfirmAsync(PayFastNotification notification, CancellationToken token);
 }
-
+//Firestore implementation of the sandbox payment store
+//primary constructor: the Firestore database is injected through dependency injection
 public class SandboxPaymentStore(FirestoreDb db) : ISandboxPaymentStore
 {
     public Task<CheckoutOrder> PrepareAsync(string orderId, string userId, CancellationToken token) =>
         db.RunTransactionAsync(async transaction =>
         {
+        //the order document and a receipt document are both looked up by ID
+//the receipt is keyed by PayFast's payment ID, so each PayFast payment can only be recorded once
             var reference = db.Collection("orders").Document(orderId);
             var snapshot = await transaction.GetSnapshotAsync(reference, token);
             if (!snapshot.Exists) throw new CheckoutException(404, "Order not found.");
@@ -56,7 +59,7 @@ public class SandboxPaymentStore(FirestoreDb db) : ISandboxPaymentStore
             return true;
         }, cancellationToken: token);
     }
-
+//checks that a PayFast notification matches the saved order
     public static void ValidateConfirmation(CheckoutOrder order, PayFastNotification notification)
     {
         if (order.Id != notification.OrderId || order.PaymentEnvironment != "sandbox" || order.Currency != "ZAR"
@@ -66,7 +69,7 @@ public class SandboxPaymentStore(FirestoreDb db) : ISandboxPaymentStore
         if (!string.IsNullOrEmpty(order.PayFastPaymentId) && order.PayFastPaymentId != notification.PaymentId)
             throw new CheckoutException(409, "This order already has a different payment reference.");
     }
-
+    //checks that a payment can be started for this order
     public static void ValidateStart(CheckoutOrder order, string userId, DateTime nowUtc)
     {
         if (order.UserId != userId) throw new CheckoutException(404, "Order not found.");
