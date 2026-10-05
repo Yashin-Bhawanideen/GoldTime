@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using GoldTimeApi.Models;
 
 namespace GoldTimeApi.Services;
-
+//holds the PayFast configuration values (merchant details, passphrase and the public URL PayFast can reach)
 public record PayFastSettings(string MerchantId, string MerchantKey, string Passphrase, string PublicBaseUrl)
 {
     //this integration only connects to the sandbox payment URLs
@@ -14,10 +14,14 @@ public record PayFastSettings(string MerchantId, string MerchantKey, string Pass
 
     public static PayFastSettings Read(IConfiguration configuration)
     {
+        //missing values default to an empty string so the checks below fail cleanly instead of throwing a null error
         var id = configuration["PayFast:MerchantId"] ?? "";
         var key = configuration["PayFast:MerchantKey"] ?? "";
         var passphrase = configuration["PayFast:Passphrase"] ?? "";
         var baseUrl = configuration["PayFast:PublicBaseUrl"] ?? "";
+        //sandbox mode must be switched on explicitly, the merchant ID must be 8 digits, and the key and passphrase must be set
+//the public URL must be an absolute https address that is not localhost, has no username/password, query string or fragment
+//(PayFast's servers must be able to reach it for the notify, return and cancel URLs)
         if (configuration["PayFast:SandboxEnabled"] != "true" || !Regex.IsMatch(id, "^[0-9]{8}$")
             || string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(passphrase)
             || !Uri.TryCreate(baseUrl, UriKind.Absolute, out var uri) || uri.Scheme != "https"
@@ -26,6 +30,7 @@ public record PayFastSettings(string MerchantId, string MerchantKey, string Pass
         return new(id, key, passphrase, baseUrl.TrimEnd('/'));
     }
 }
+//the data the app needs to send the user to PayFast: the URL to post to, the form fields and the environment name
 
 public record PayFastForm(string ActionUrl, List<KeyValuePair<string, string>> Fields, string Environment = "sandbox");
 public record PayFastNotification(string OrderId, string PaymentId, long AmountCents, string Status);
