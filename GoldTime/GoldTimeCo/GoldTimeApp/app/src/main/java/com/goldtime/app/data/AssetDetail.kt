@@ -1,5 +1,7 @@
 package com.goldtime.app.data
 
+//data class: Kotlin automatically generates equals, hashCode, toString and copy for classes that only hold data
+//holds everything the asset detail screen shows for one product
 data class AssetDetail(
     val id: String,
     val name: String,
@@ -11,7 +13,7 @@ data class AssetDetail(
     val stock: String,
     val description: String
 )
-
+//object makes this a singleton, so the whole app reads the same catalog
 object AssetCatalog {
     // TEMPORARY static data, matching BrowseScreen's temp-1/temp-2 ids.
     // Replace with API-backed data once the backend returns these fields.
@@ -39,6 +41,7 @@ object AssetCatalog {
             description = "Investment-grade 1oz gold bar, cast and sealed with assay certificate."
         )
     )
-
+//looks up an asset by its ID
+    //returns the first match, or null if there is none, so the caller must handle a missing asset
     fun find(id: String): AssetDetail? = assets.firstOrNull { it.id == id }
 }
