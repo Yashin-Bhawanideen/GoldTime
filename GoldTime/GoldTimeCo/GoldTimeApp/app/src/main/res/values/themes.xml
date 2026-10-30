@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.GoldTime" parent="android:Theme.Material.NoActionBar">
-        <item name="android:windowBackground">#070707</item>
-        <item name="android:colorBackground">#070707</item>
-    </style>
-</resources>
