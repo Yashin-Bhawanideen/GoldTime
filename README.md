@@ -8,6 +8,8 @@
 - ST10443463	Yashin Bhawanideen
 - ST10443090	Amir Muller
 - ST10450208	Mishal Bhikha
+# Install app
+https://goldtimeimages.blob.core.windows.net/downloads/GoldTime.apk
 
 # File paths
 Json files are separately commited, if you want to run the application you will need to do this first:
